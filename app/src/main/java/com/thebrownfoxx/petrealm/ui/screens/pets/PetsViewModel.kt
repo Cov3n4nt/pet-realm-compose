@@ -1,13 +1,19 @@
 package com.thebrownfoxx.petrealm.ui.screens.pets
 
+import androidx.compose.material3.Text
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hamthelegend.enchantmentorder.extensions.combineToStateFlow
+import com.hamthelegend.enchantmentorder.extensions.mapToStateFlow
 import com.hamthelegend.enchantmentorder.extensions.search
 import com.thebrownfoxx.petrealm.models.Owner
 import com.thebrownfoxx.petrealm.models.Pet
 import com.thebrownfoxx.petrealm.realm.RealmDatabase
+import com.thebrownfoxx.petrealm.realm.models.RealmPet
+import com.thebrownfoxx.petrealm.realm.models.RealmPetType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,6 +25,16 @@ class PetsViewModel : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
+
+
+    val petTypes: StateFlow<List<String>> = database.getAllPetTypes()
+        .mapToStateFlow(
+            scope = viewModelScope,
+            initialValue = emptyList(),
+            transform = { list ->
+                list.map { it.name }
+            }
+        )
     val pets = combineToStateFlow(
         database.getAllPets(),
         searchQuery,
@@ -39,16 +55,49 @@ class PetsViewModel : ViewModel() {
                     )
                 },
             )
-        }.search(searchQuery) { it.name }
+        }.search(searchQuery) {it.name}
     }
 
     private val _addPetDialogState = MutableStateFlow<AddPetDialogState>(AddPetDialogState.Hidden)
     val addPetDialogState = _addPetDialogState.asStateFlow()
 
-    private val _removePetDialogState =
-        MutableStateFlow<RemovePetDialogState>(RemovePetDialogState.Hidden)
-    val removePetDialogState = _removePetDialogState.asStateFlow()
+    private val _addPetOwnerDialogState = MutableStateFlow<AddPetOwnerDialogState>(AddPetOwnerDialogState.Hidden)
+    val addPetOwnerDialogState = _addPetOwnerDialogState.asStateFlow()
 
+    fun hidePetOwnerDialog(){
+        _addPetOwnerDialogState.update { AddPetOwnerDialogState.Hidden }
+    }
+
+    fun updatePetOwnerName(newOwnerName: String) {
+        _addPetOwnerDialogState.update {
+            if (it is AddPetOwnerDialogState.Visible) {
+                it.copy(
+                    ownerName = newOwnerName,
+                    hasOwnerNameWarning = false,
+                )
+            } else it
+        }
+    }
+    fun initiateAddOwner(pet: Pet){
+        _addPetOwnerDialogState.update { AddPetOwnerDialogState.Visible("",pet) }
+    }
+
+    fun addPetOwner(){
+        var state = addPetOwnerDialogState.value
+        with(state){
+            if(this is AddPetOwnerDialogState.Visible){
+                viewModelScope.launch {
+                    database.addOwner(
+                        ownerName = ownerName,
+                        pet = pet,
+                    )
+                    _addPetOwnerDialogState.update { AddPetOwnerDialogState.Hidden }
+                }
+
+            }
+        }
+
+    }
 
     fun updateSearchQuery(newQuery: String) {
         _searchQuery.update { newQuery }
@@ -123,16 +172,15 @@ class PetsViewModel : ViewModel() {
         }
     }
 
-    fun addPet() {
+    fun addPet(){
+        var newState: AddPetDialogState? = null
         var state = addPetDialogState.value
         with(state) {
             if (this is AddPetDialogState.Visible) {
-                if (petName.isBlank()) state = copy(hasPetNameWarning = true)
-                if (petAge == null) state = copy(hasPetAgeWarning = true)
-                if (petType.isBlank()) state = copy(hasPetTypeWarning = true)
-                if (hasOwner && ownerName.isBlank()) state = copy(hasOwnerNameWarning = true)
-
-                if (!hasWarning) {
+                if(petName.isBlank() || petType.isBlank() || petAge == null){
+                   state =  copy(hasPetNameWarning = true, hasPetAgeWarning = true, hasPetTypeWarning = true)
+                }
+                else{
                     viewModelScope.launch {
                         database.addPet(
                             name = petName,
@@ -143,25 +191,16 @@ class PetsViewModel : ViewModel() {
                     }
                     state = AddPetDialogState.Hidden
                 }
-            }
-        }
-        _addPetDialogState.update { state }
-    }
-
-    fun initiateRemovePet(pet: Pet) {
-        _removePetDialogState.update { RemovePetDialogState.Visible(pet) }
-    }
-
-    fun cancelRemovePet() {
-        _removePetDialogState.update { RemovePetDialogState.Hidden }
-    }
-
-    fun removePet() {
-        val state = removePetDialogState.value
-        if (state is RemovePetDialogState.Visible) {
-            viewModelScope.launch {
-                database.deletePet(id = ObjectId(state.pet.id))
+                _addPetDialogState.update { state }
             }
         }
     }
+
+    fun deletePet(pet: Pet){
+        viewModelScope.launch {
+            database.deletePet(id = ObjectId(pet.id))
+        }
+    }
+
+
 }

@@ -12,9 +12,18 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun Owners(navigator: DestinationsNavigator) {
     val viewModel: OwnersViewModel = viewModel()
 
+
     with(viewModel) {
         val owners by owners.collectAsStateWithLifecycle()
-
-        OwnersScreen(owners = owners)
+        val ownerListenerState by ownerListenerState.collectAsStateWithLifecycle()
+        OwnersScreen(
+            owners = owners,
+            ownerListenerState = ownerListenerState,
+            ownerStateChangeListener = OwnerStateChangeListener(
+                onDelete = ::deleteOwner,
+                initiateView = ::initiateViewOwner,
+                onHideViewOwner = ::hideViewOwner,
+                updateOwnerName = {},
+            ))
     }
 }

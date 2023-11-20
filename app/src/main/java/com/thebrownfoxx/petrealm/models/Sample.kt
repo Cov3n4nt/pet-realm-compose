@@ -1,19 +1,24 @@
 package com.thebrownfoxx.petrealm.models
 
 object Sample {
+    val listType = listOf(
+        "Cat","Dog"
+    )
     val Pet = Pet(
         name = "Tan",
-        age = 7,
-        type = "Dog",
-        owner = Owner(name = "Justine")
+        age = 8,
+        type = "Cat",
+        owner = null
     )
 
     val Pets = listOf(
-        Pet,
         Pet(
             name = "Jericho",
             age = 69,
             type = "Doggo",
+            owner = Owner(
+                name = "Andrea"
+            )
         )
     )
 }

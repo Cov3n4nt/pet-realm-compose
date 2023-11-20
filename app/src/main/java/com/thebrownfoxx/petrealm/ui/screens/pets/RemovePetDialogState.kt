@@ -1,14 +1,8 @@
 package com.thebrownfoxx.petrealm.ui.screens.pets
 
 import com.thebrownfoxx.petrealm.models.Pet
-
-sealed class RemovePetDialogState {
-    data object Hidden: RemovePetDialogState()
-    data class Visible(val pet: Pet): RemovePetDialogState()
-}
+import org.mongodb.kbson.ObjectId
 
 class RemovePetDialogStateChangeListener(
-    val onInitiateRemovePet: (Pet) -> Unit,
-    val onCancelRemovePet: () -> Unit,
-    val onRemovePet: () -> Unit
+    val onDeletePet: (Pet) -> Unit,
 )

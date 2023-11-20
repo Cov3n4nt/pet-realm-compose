@@ -13,13 +13,15 @@ fun Pets(navigator: DestinationsNavigator) {
     val viewModel: PetsViewModel = viewModel()
 
     with(viewModel) {
+        val petTypes by petTypes.collectAsStateWithLifecycle(emptyList())
         val pets by pets.collectAsStateWithLifecycle()
         val searchQuery by searchQuery.collectAsStateWithLifecycle()
         val addPetDialogState by addPetDialogState.collectAsStateWithLifecycle()
-        val removePetDialogState by removePetDialogState.collectAsStateWithLifecycle()
+        val addPetOwnerDialogState by addPetOwnerDialogState.collectAsStateWithLifecycle()
 
         PetsScreen(
             pets = pets,
+            petTypes = petTypes,
             searchQuery = searchQuery,
             onSearchQueryChange = ::updateSearchQuery,
             addPetDialogState = addPetDialogState,
@@ -29,15 +31,20 @@ fun Pets(navigator: DestinationsNavigator) {
                 onPetNameChange = ::updatePetName,
                 onPetAgeChange = ::updatePetAge,
                 onPetTypeChange = ::updatePetType,
-                onHasOwnerChange = ::updateHasOwner,
                 onOwnerNameChange = ::updateOwnerName,
                 onAddPet = ::addPet
             ),
-            removePetDialogState = removePetDialogState,
+
             removePetDialogStateChangeListener = RemovePetDialogStateChangeListener(
-                onInitiateRemovePet = ::initiateRemovePet,
-                onCancelRemovePet = ::cancelRemovePet,
-                onRemovePet = ::removePet
+                onDeletePet = ::deletePet,
+
+            ),
+            addPetOwnerDialogState = addPetOwnerDialogState,
+            addPetOwnerDialogStateChangeListener = AddPetOwnerDialogStateChangeListener(
+                onOwnerNameChange = ::updatePetOwnerName,
+                initiateAddOwner = ::initiateAddOwner,
+                onHideAddPetOwnerDialog = ::hidePetOwnerDialog,
+                onAddPetOwner = ::addPetOwner,
             )
         )
     }
