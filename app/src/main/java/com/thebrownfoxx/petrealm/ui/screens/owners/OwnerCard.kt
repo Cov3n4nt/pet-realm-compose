@@ -87,8 +87,8 @@ fun OwnerCard(
 fun OwnerCardPreview() {
     AppTheme {
         OwnerCard(owner = Sample.owner,
-            onRemove = { },
-            initiateView = { }
+            onRemove = {},
+            initiateView = {}
         )
     }
 }
