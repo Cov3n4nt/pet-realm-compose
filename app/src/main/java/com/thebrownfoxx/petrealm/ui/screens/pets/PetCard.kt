@@ -12,6 +12,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
@@ -54,29 +56,32 @@ fun PetCard(
                 modifier = modifier,
                 onClick = onView,
                 ) {
-                Row(modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                    Arrangement.Start) {
-                    Box(modifier = Modifier.padding(8.dp)
-                        .align(Alignment.CenterVertically)){
-                        Image(
-                            painter = painterResource(id = if (pet.type == "Cat") R.drawable.cat else R.drawable.dog),
-                            contentDescription = pet.type,
-                            Modifier.size(64.dp),
-                        )
-                    }
+                Surface(color = MaterialTheme.colorScheme.primaryContainer) {
+                    Row(modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                        Arrangement.Start) {
+                        Box(modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.CenterVertically)){
+                            Image(
+                                painter = painterResource(id = if (pet.type == "Cat") R.drawable.cat else R.drawable.dog),
+                                contentDescription = pet.type,
+                                Modifier.size(64.dp),
+                            )
+                        }
 
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(text = "Name: ${pet.name}")
-                        Text(text = "Type: ${pet.type}")
-                        Text(text = "Age: ${pet.age}")
-                        if (pet.owner != null) Text(text = "Owner: ${pet.owner.name}")
-                        else FilledButton(
-                            modifier = Modifier.align(Alignment.End),
-                            text = "Adopt",
-                            onClick = onAdopt)
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(text = "Name: ${pet.name}")
+                            Text(text = "Type: ${pet.type}")
+                            Text(text = "Age: ${pet.age}")
+                            if (pet.owner != null) Text(text = "Owner: ${pet.owner.name}")
+                            else FilledButton(
+                                modifier = Modifier.align(Alignment.End),
+                                text = "Adopt",
+                                onClick = onAdopt)
 
+                        }
                     }
                 }
             }

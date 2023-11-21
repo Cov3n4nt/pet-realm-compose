@@ -5,8 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+
+@RootNavGraph(start = true)
 @Destination
 @Composable
 fun Pets(navigator: DestinationsNavigator) {
@@ -21,6 +24,7 @@ fun Pets(navigator: DestinationsNavigator) {
         val editPetDialogState by editPetDialogState.collectAsStateWithLifecycle()
 
         PetsScreen(
+            navigator = navigator,
             pets = pets,
             petTypes = petTypes,
             searchQuery = searchQuery,

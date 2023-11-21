@@ -13,6 +13,8 @@ import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
@@ -53,28 +55,30 @@ fun OwnerCard(
                 modifier = modifier,
                 onClick = initiateView,
                 ) {
-                Row(modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                    Arrangement.Start) {
-                    Box(modifier = Modifier
-                        .padding(4.dp)
-                        .align(Alignment.CenterVertically)
-                    ) {
-                        Icon(imageVector = Icons.Default.Person, contentDescription = "person icon")
-                    }
-
-                    Column(
-                        modifier = Modifier
+                Surface(color = MaterialTheme.colorScheme.primaryContainer) {
+                    Row(modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                        Arrangement.Start) {
+                        Box(modifier = Modifier
                             .padding(4.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        Text(text = "Name: ${owner.name}")
-                        Text(
-                            text = "Pets: ${owner.pets.joinToString(", ") { it.name }}",
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
+                            .align(Alignment.CenterVertically)
+                        ) {
+                            Icon(imageVector = Icons.Default.Person, contentDescription = "person icon")
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            Text(text = "Name: ${owner.name}")
+                            Text(
+                                text = "Pets: ${owner.pets.joinToString(", ") { it.name }}",
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                            )
+                        }
                     }
                 }
             }

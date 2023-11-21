@@ -12,13 +12,13 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun Owners(navigator: DestinationsNavigator) {
     val viewModel: OwnersViewModel = viewModel()
 
-
     with(viewModel) {
         val owners by owners.collectAsStateWithLifecycle()
         val ownerListenerState by ownerListenerState.collectAsStateWithLifecycle()
         val searchQuery by searchQuery.collectAsStateWithLifecycle()
 
         OwnersScreen(
+            navigator = navigator,
             owners = owners,
             searchQuery = searchQuery,
             onSearchQueryChange = ::updateSearchQuery,
