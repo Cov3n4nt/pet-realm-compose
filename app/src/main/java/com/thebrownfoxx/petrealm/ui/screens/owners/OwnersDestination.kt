@@ -16,14 +16,21 @@ fun Owners(navigator: DestinationsNavigator) {
     with(viewModel) {
         val owners by owners.collectAsStateWithLifecycle()
         val ownerListenerState by ownerListenerState.collectAsStateWithLifecycle()
+        val searchQuery by searchQuery.collectAsStateWithLifecycle()
+
         OwnersScreen(
             owners = owners,
+            searchQuery = searchQuery,
+            onSearchQueryChange = ::updateSearchQuery,
             ownerListenerState = ownerListenerState,
             ownerStateChangeListener = OwnerStateChangeListener(
                 onDelete = ::deleteOwner,
                 initiateView = ::initiateViewOwner,
                 onHideViewOwner = ::hideViewOwner,
-                updateOwnerName = {},
-            ))
+                updateOwnerName = ::updateOwnerName,
+                onUpdate = ::updateOwnerDetails,
+                onDisown = ::disownPet,
+            ),
+        )
     }
 }

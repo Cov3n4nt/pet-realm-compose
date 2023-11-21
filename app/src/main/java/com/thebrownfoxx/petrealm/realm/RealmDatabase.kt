@@ -37,6 +37,39 @@ class RealmDatabase {
 
     fun getAllPets(): Flow<List<RealmPet>> = realm.query<RealmPet>().asFlow().map { it.list }
 
+    suspend fun editPet(pet: Pet, petName: String, petAge: Int, petType: String, ownerName: String){
+        withContext(Dispatchers.IO){
+            realm.write {
+                val petResult: RealmPet? = realm.query<RealmPet>("id == $0", ObjectId(pet.id)).first().find()
+                if(petResult != null){
+                    val petRealm = findLatest(petResult)
+                    petRealm?.apply {
+                        this.name = petName
+                        this.age = petAge
+                        this.type = petType
+                    }
+                }
+                else{
+                    throw IllegalStateException("Pet not found!")
+                }
+            }
+        }
+    }
+
+    suspend fun updateOwner(owner: Owner, newName: String) {
+        realm.write {
+            val ownerResult: RealmOwner? = realm.query<RealmOwner>("id == $0", ObjectId(owner.id)).first().find()
+            if (ownerResult != null) {
+                val ownerRealm = findLatest(ownerResult)
+                ownerRealm?.apply {
+                    this.name = newName
+                }
+            }
+            else{
+                throw IllegalStateException("Owner not found!")
+            }
+        }
+    }
 
     suspend fun addOwner(ownerName: String, pet: Pet) {
         withContext(Dispatchers.IO) {
@@ -127,6 +160,23 @@ class RealmDatabase {
                     .find()
                     ?.let { delete(it) }
                     ?: throw IllegalStateException("Owner not found!")
+            }
+        }
+    }
+
+    suspend fun disownPet(pet:Pet){
+        withContext(Dispatchers.IO){
+            realm.write {
+                val petResult = query<RealmPet>("id ==$0",ObjectId(pet.id)).first().find()
+
+                if(petResult!=null){
+                    val petRealm = findLatest(petResult)
+                    petRealm?.owner?.pets?.remove(petRealm)
+                    petRealm?.owner = null
+                }
+                else{
+                    throw IllegalStateException("Pet not found!")
+                }
             }
         }
     }

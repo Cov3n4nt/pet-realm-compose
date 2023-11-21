@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.thebrownfoxx.components.FilledButton
 import com.thebrownfoxx.petrealm.R
 
 @Composable
@@ -34,40 +35,32 @@ fun OwnerDetailsDialog(
                Column(verticalArrangement = Arrangement.spacedBy(16.dp)){
                    TextField(
                        label = { Text(text = "Name")},
-                       value = state.owner.name,
+                       value = state.ownerName,
                        onValueChange = stateChangeListener.updateOwnerName,
                    )
                    Text(text = "Pet/s Owned: ")
                    Box(modifier = Modifier.fillMaxWidth()){
                        LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                            items(
-                               items = state.owner.pets,
+                               items = state.pet,
                                key = {ownedPet -> ownedPet.id}
                            ) { ownedPet ->
-                               Card(modifier = Modifier.fillMaxWidth()) {
-                                   Row {
-                                       Box(modifier = Modifier
-                                           .padding(8.dp)
-                                           .align(Alignment.CenterVertically)){
-                                           Image(
-                                               painter = painterResource(id = if (ownedPet.type == "Cat") R.drawable.cat else R.drawable.dog),
-                                               contentDescription = ownedPet.type,
-                                               Modifier.size(64.dp),
-                                           )
-                                       }
-                                       Column {
-                                           Text(text = "Name: ${ownedPet.name}")
-                                           Text(text = "Age: ${ownedPet.age}")
-                                           Text(text = "Type: ${ownedPet.type}")
-                                       }
-                                   }
-                               }
+                              OwnedPetCard(
+                                  pet = ownedPet,
+                                  onDisown = {stateChangeListener.onDisown(ownedPet)}
+                              )
                            }
                        }
                    }
                }
 
            },
-           confirmButton = { /*TODO*/ })
+           confirmButton = {
+               FilledButton(
+               text = "Update",
+               onClick = stateChangeListener.onUpdate
+               )
+           }
+       )
     }
 }

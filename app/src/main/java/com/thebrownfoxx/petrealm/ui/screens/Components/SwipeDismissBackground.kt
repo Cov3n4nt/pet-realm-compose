@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,7 +23,7 @@ fun DismissBackground(dismissState: DismissState) {
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+            .background(Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

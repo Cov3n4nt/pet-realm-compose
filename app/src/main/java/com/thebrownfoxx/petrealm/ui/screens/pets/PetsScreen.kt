@@ -33,6 +33,8 @@ fun PetsScreen(
     petTypes: List<String>,
     pets: List<Pet>,
     searchQuery: String,
+    editPetDialogState: EditPetDialogState,
+    editPetDialogStateChangeListener: EditPetDialogStateChangeListener,
     addPetOwnerDialogState: AddPetOwnerDialogState,
     addPetOwnerDialogStateChangeListener: AddPetOwnerDialogStateChangeListener,
     onSearchQueryChange: (String) -> Unit,
@@ -81,7 +83,8 @@ fun PetsScreen(
                         PetCard(
                             pet = pet,
                             onRemove = { removePetDialogStateChangeListener.onDeletePet(pet) },
-                            onAdopt = {addPetOwnerDialogStateChangeListener.initiateAddOwner(pet)}
+                            onAdopt = {addPetOwnerDialogStateChangeListener.initiateAddOwner(pet)},
+                            onView = {editPetDialogStateChangeListener.initiateEditPetDialog(pet)}
                         )
                     }
                 }
@@ -97,6 +100,11 @@ fun PetsScreen(
         state = addPetDialogState,
         stateChangeListener = addPetDialogStateChangeListener,
         petTypes = petTypes,
+    )
+    EditPetDialog(
+        petTypes = petTypes,
+        state = editPetDialogState,
+        stateChangeListener = editPetDialogStateChangeListener
     )
 }
 
@@ -128,7 +136,16 @@ fun PetsScreenPreview() {
                 onOwnerNameChange = {},
                 initiateAddOwner = {},
                 onAddPetOwner = {},
-
+            ),
+            editPetDialogState = EditPetDialogState.Hidden,
+            editPetDialogStateChangeListener = EditPetDialogStateChangeListener(
+                onEditPet = {},
+                onOwnerNameChange = {},
+                initiateEditPetDialog = {},
+                onHideEditPetDialog = {},
+                onPetAgeChange = {},
+                onPetNameChange = {},
+                onPetTypeChange = {},
             )
         )
     }

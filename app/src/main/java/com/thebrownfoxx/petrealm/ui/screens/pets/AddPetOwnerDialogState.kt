@@ -9,7 +9,7 @@ sealed class AddPetOwnerDialogState {
     data object Hidden : AddPetOwnerDialogState()
 
    data class Visible(
-       val ownerName: String = "",
+       val ownerName: String,
        val pet: Pet,
        val hasOwnerNameWarning: Boolean = false,
    ) : AddPetOwnerDialogState()

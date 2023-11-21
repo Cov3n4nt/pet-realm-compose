@@ -21,4 +21,13 @@ object Sample {
             )
         )
     )
+
+    val owner = Owner(
+        name = "Lotus",
+        pets = listOf(Pet(
+            name = "Jerald",
+            age = 25,
+            type = "Cat"
+        ))
+    )
 }

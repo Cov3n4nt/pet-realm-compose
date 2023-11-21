@@ -35,6 +35,7 @@ class PetsViewModel : ViewModel() {
                 list.map { it.name }
             }
         )
+
     val pets = combineToStateFlow(
         database.getAllPets(),
         searchQuery,
@@ -64,6 +65,11 @@ class PetsViewModel : ViewModel() {
     private val _addPetOwnerDialogState = MutableStateFlow<AddPetOwnerDialogState>(AddPetOwnerDialogState.Hidden)
     val addPetOwnerDialogState = _addPetOwnerDialogState.asStateFlow()
 
+
+
+    private val _editPetDialogState = MutableStateFlow<EditPetDialogState>(EditPetDialogState.Hidden)
+    val editPetDialogState = _editPetDialogState.asStateFlow()
+
     fun hidePetOwnerDialog(){
         _addPetOwnerDialogState.update { AddPetOwnerDialogState.Hidden }
     }
@@ -82,21 +88,32 @@ class PetsViewModel : ViewModel() {
         _addPetOwnerDialogState.update { AddPetOwnerDialogState.Visible("",pet) }
     }
 
+    fun initiateEditPetDialog(pet: Pet){
+        _editPetDialogState.update { EditPetDialogState.Visible(pet) }
+    }
+
+    fun hideEditPetDialog(){
+        _editPetDialogState.update { EditPetDialogState.Hidden }
+    }
+
+
+
     fun addPetOwner(){
         var state = addPetOwnerDialogState.value
         with(state){
             if(this is AddPetOwnerDialogState.Visible){
-                viewModelScope.launch {
-                    database.addOwner(
-                        ownerName = ownerName,
-                        pet = pet,
-                    )
-                    _addPetOwnerDialogState.update { AddPetOwnerDialogState.Hidden }
+                if(ownerName.isBlank()) state = copy(hasOwnerNameWarning = true)
+                else{
+                    viewModelScope.launch {
+                        database.addOwner(
+                            ownerName = ownerName,
+                            pet = pet,
+                        )
+                    }
                 }
-
+                _addPetOwnerDialogState.update { AddPetOwnerDialogState.Hidden }
             }
         }
-
     }
 
     fun updateSearchQuery(newQuery: String) {
@@ -111,6 +128,82 @@ class PetsViewModel : ViewModel() {
 
     fun hidePetDialog() {
         _addPetDialogState.update { AddPetDialogState.Hidden }
+    }
+
+    fun editPet(){
+        var state = editPetDialogState.value
+        with(state){
+            if(this is EditPetDialogState.Visible){
+                if (petName.isBlank() || petAge == null || petType.isBlank()) {
+                    state = copy(
+                        hasPetNameWarning = petName.isBlank(),
+                        hasPetAgeWarning = petAge == null,
+                        hasPetTypeWarning = petType.isBlank()
+                    )
+                }
+                else{
+                    viewModelScope.launch {
+                        database.editPet(
+                            pet = pet,
+                            petName = petName,
+                            petAge = petAge,
+                            petType = petType,
+                            ownerName = ownerName
+                        )
+                    }
+                }
+                _editPetDialogState.update { EditPetDialogState.Hidden }
+            }
+        }
+    }
+
+    fun updateNewPetName(newPetName: String){
+        var state = editPetDialogState.value
+        _editPetDialogState.update {
+            if(it is EditPetDialogState.Visible){
+                it.copy(
+                    petName = newPetName,
+                    hasPetNameWarning = false,
+                )
+            } else it
+        }
+    }
+
+    fun updateNewPetAge(newPetAge: String){
+        _editPetDialogState.update {
+            if (it is EditPetDialogState.Visible) {
+                val petAge = when (newPetAge) {
+                    "" -> null
+                    else -> newPetAge.toIntOrNull() ?: it.petAge
+                }
+                it.copy(
+                    petAge = petAge,
+                    hasPetAgeWarning = false,
+                )
+            } else it
+        }
+    }
+
+    fun updateNewPetType(newPetType: String){
+        _editPetDialogState.update {
+            if(it is EditPetDialogState.Visible){
+                it.copy(
+                    petType = newPetType,
+                    hasPetTypeWarning = false,
+                )
+            } else it
+        }
+    }
+
+    fun updateNewPetOwner(newPetOwner: String){
+        _editPetDialogState.update {
+            if(it is EditPetDialogState.Visible){
+                it.copy(
+                    ownerName = newPetOwner,
+                    hasOwnerNameWarning = false,
+                )
+            } else it
+        }
     }
 
     fun updatePetName(newPetName: String) {
@@ -150,16 +243,6 @@ class PetsViewModel : ViewModel() {
         }
     }
 
-    fun updateHasOwner(newHasOwner: Boolean) {
-        _addPetDialogState.update {
-            if (it is AddPetDialogState.Visible) {
-                it.copy(
-                    hasOwner = newHasOwner,
-                    ownerName = if (!newHasOwner) "" else it.ownerName,
-                )
-            } else it
-        }
-    }
 
     fun updateOwnerName(newOwnerName: String) {
         _addPetDialogState.update {
@@ -173,18 +256,21 @@ class PetsViewModel : ViewModel() {
     }
 
     fun addPet(){
-        var newState: AddPetDialogState? = null
         var state = addPetDialogState.value
         with(state) {
             if (this is AddPetDialogState.Visible) {
-                if(petName.isBlank() || petType.isBlank() || petAge == null){
-                   state =  copy(hasPetNameWarning = true, hasPetAgeWarning = true, hasPetTypeWarning = true)
+                if (petName.isBlank() || petAge == null || petType.isBlank()) {
+                    state = copy(
+                        hasPetNameWarning = petName.isBlank(),
+                        hasPetAgeWarning = petAge == null,
+                        hasPetTypeWarning = petType.isBlank()
+                    )
                 }
-                else{
+                else {
                     viewModelScope.launch {
                         database.addPet(
                             name = petName,
-                            age = petAge!!,
+                            age = petAge,
                             type = petType,
                             ownerName = ownerName,
                         )

@@ -1,7 +1,6 @@
-package com.thebrownfoxx.petrealm.ui.screens.pets
+package com.thebrownfoxx.petrealm.ui.screens.owners
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,17 +29,14 @@ import com.thebrownfoxx.petrealm.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetCard(
+fun OwnedPetCard(
     pet: Pet,
-    onRemove: () -> Unit,
-    onAdopt: () -> Unit,
-    onView: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+    onDisown: ()->Unit
+    ) {
     val dismissState = rememberDismissState(
         confirmValueChange = {direction->
             if(direction == DismissValue.DismissedToEnd){
-                onRemove()
+               onDisown()
             }
             true
         }
@@ -50,15 +46,10 @@ fun PetCard(
         directions = setOf(DismissDirection.StartToEnd),
         background = { DismissBackground(dismissState = dismissState) },
         dismissContent = {
-            Card(
-                modifier = modifier,
-                onClick = onView,
-                ) {
-                Row(modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                    Arrangement.Start) {
-                    Box(modifier = Modifier.padding(8.dp)
+            Card(modifier = Modifier.fillMaxWidth()){
+                Row {
+                    Box(modifier = Modifier
+                        .padding(8.dp)
                         .align(Alignment.CenterVertically)){
                         Image(
                             painter = painterResource(id = if (pet.type == "Cat") R.drawable.cat else R.drawable.dog),
@@ -66,37 +57,22 @@ fun PetCard(
                             Modifier.size(64.dp),
                         )
                     }
-
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    Column {
                         Text(text = "Name: ${pet.name}")
-                        Text(text = "Type: ${pet.type}")
                         Text(text = "Age: ${pet.age}")
-                        if (pet.owner != null) Text(text = "Owner: ${pet.owner.name}")
-                        else FilledButton(
-                            modifier = Modifier.align(Alignment.End),
-                            text = "Adopt",
-                            onClick = onAdopt)
-
+                        Text(text = "Type: ${pet.type}")
                     }
                 }
+
             }
         }
     )
-
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun PetCardPreview() {
-
+fun OwnedPetCardPreview() {
     AppTheme {
-        PetCard(
-            pet = Sample.Pet,
-            onRemove = {},
-            onAdopt = {},
-            onView = {},
-            modifier = Modifier.padding(16.dp),
-        )
+        OwnedPetCard(pet = Sample.Pet, onDisown = {})
     }
 }

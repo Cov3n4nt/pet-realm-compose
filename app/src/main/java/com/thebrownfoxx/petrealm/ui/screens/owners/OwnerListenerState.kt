@@ -9,6 +9,9 @@ sealed class OwnerListenerState{
     data object Hidden: OwnerListenerState()
     data class Visible(
         val owner: Owner,
+        val pet: List<Pet> = owner.pets,
+        val ownerName: String = owner.name,
+        val hasOwnerNameWarning: Boolean = false,
     ): OwnerListenerState()
 
 }
@@ -18,4 +21,6 @@ class OwnerStateChangeListener (
     val updateOwnerName: (String)-> Unit,
     val initiateView: (Owner)-> Unit,
     val onHideViewOwner: ()-> Unit,
+    val onUpdate:()-> Unit,
+    val onDisown: (Pet)-> Unit,
 )

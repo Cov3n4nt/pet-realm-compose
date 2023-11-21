@@ -18,6 +18,7 @@ fun Pets(navigator: DestinationsNavigator) {
         val searchQuery by searchQuery.collectAsStateWithLifecycle()
         val addPetDialogState by addPetDialogState.collectAsStateWithLifecycle()
         val addPetOwnerDialogState by addPetOwnerDialogState.collectAsStateWithLifecycle()
+        val editPetDialogState by editPetDialogState.collectAsStateWithLifecycle()
 
         PetsScreen(
             pets = pets,
@@ -37,7 +38,6 @@ fun Pets(navigator: DestinationsNavigator) {
 
             removePetDialogStateChangeListener = RemovePetDialogStateChangeListener(
                 onDeletePet = ::deletePet,
-
             ),
             addPetOwnerDialogState = addPetOwnerDialogState,
             addPetOwnerDialogStateChangeListener = AddPetOwnerDialogStateChangeListener(
@@ -45,6 +45,16 @@ fun Pets(navigator: DestinationsNavigator) {
                 initiateAddOwner = ::initiateAddOwner,
                 onHideAddPetOwnerDialog = ::hidePetOwnerDialog,
                 onAddPetOwner = ::addPetOwner,
+            ),
+            editPetDialogState = editPetDialogState,
+            editPetDialogStateChangeListener = EditPetDialogStateChangeListener(
+                initiateEditPetDialog = ::initiateEditPetDialog,
+                onHideEditPetDialog = ::hideEditPetDialog,
+                onPetTypeChange = ::updateNewPetType,
+                onPetNameChange = ::updateNewPetName,
+                onPetAgeChange = ::updateNewPetAge,
+                onOwnerNameChange = ::updateNewPetOwner,
+                onEditPet = ::editPet
             )
         )
     }
