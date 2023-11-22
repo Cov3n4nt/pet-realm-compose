@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Navigation
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.BottomAppBar
@@ -22,6 +25,8 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +38,8 @@ import com.thebrownfoxx.components.extension.plus
 import com.thebrownfoxx.petrealm.models.Pet
 import com.thebrownfoxx.petrealm.models.Sample
 import com.thebrownfoxx.petrealm.ui.screens.Components.EmptyScreen
+import com.thebrownfoxx.petrealm.ui.screens.Components.FabItem
+import com.thebrownfoxx.petrealm.ui.screens.Components.MultiFloatingActionButton
 import com.thebrownfoxx.petrealm.ui.screens.Components.SearchTextField
 import com.thebrownfoxx.petrealm.ui.screens.destinations.OwnersDestination
 import com.thebrownfoxx.petrealm.ui.screens.destinations.PetsDestination
@@ -65,35 +72,25 @@ fun PetsScreen(
                          .padding(8.dp),
                  )
         },
-
         bottomBar = {
-            BottomAppBar (
-                actions = {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        IconButton(onClick = {}) {
-                            Icon(imageVector = Icons.Default.Pets, contentDescription = "Pets")
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        IconButton(onClick = { navigator?.navigate(OwnersDestination) }) {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = "Person")
-                        }
-
-                    }
-                },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = addPetDialogStateChangeListener.onShowAddPetDialog,
-                        elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                    ) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                    }
-                },
+            MultiFloatingActionButton(
+                fabIcon = Icons.Default.Add,
+                items = arrayListOf(
+                    FabItem(
+                        icon= Icons.Default.People,
+                        label = "Owner",
+                        onFabItemClicked = {navigator?.navigate(OwnersDestination)}
+                    ),
+                    FabItem(
+                        icon = Icons.Default.Add,
+                        label = "Add Pet",
+                        onFabItemClicked = addPetDialogStateChangeListener.onShowAddPetDialog
+                    ),
+                )
             )
         }
     ) { contentPadding ->
+
         Box(
             modifier = Modifier
                 .fillMaxSize(),

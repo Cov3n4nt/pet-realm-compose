@@ -69,26 +69,8 @@ fun OwnersScreen(
                 )
             }
 
-        },bottomBar = {
-            BottomAppBar (
-                actions = {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        IconButton(onClick = { navigator.navigate(PetsDestination) }) {
-                            Icon(imageVector = Icons.Default.Pets, contentDescription = "Pets")
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
+        },
 
-                        IconButton(onClick = { }) {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = "Person")
-                        }
-
-                    }
-                },
-
-                )
-        }
     ) { contentPadding ->
 
         Box(
