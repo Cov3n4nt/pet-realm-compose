@@ -37,7 +37,7 @@ class RealmDatabase {
 
     fun getAllPets(): Flow<List<RealmPet>> = realm.query<RealmPet>().asFlow().map { it.list }
 
-    suspend fun editPet(pet: Pet, petName: String, petAge: Int, petType: String, ownerName: String){
+    suspend fun editPet(pet: Pet, petName: String, petAge: Int, petType: String){
         withContext(Dispatchers.IO){
             realm.write {
                 val petResult: RealmPet? = realm.query<RealmPet>("id == $0", ObjectId(pet.id)).first().find()
@@ -76,25 +76,27 @@ class RealmDatabase {
             realm.write {
                val ownerResult: RealmOwner? = realm.query<RealmOwner>("name == $0", ownerName).first().find()
 
-                if(ownerResult != null){
-                    val existingOwner = findLatest(ownerResult)
-                    val petResult: RealmPet? = realm.query<RealmPet>("id == $0", ObjectId(pet.id)).first().find()
-                    val existingPet = findLatest(petResult!!)
+                if(ownerName.isNotBlank()){
+                    if(ownerResult != null){
+                        val existingOwner = findLatest(ownerResult)
+                        val petResult: RealmPet? = realm.query<RealmPet>("id == $0", ObjectId(pet.id)).first().find()
+                        val existingPet = findLatest(petResult!!)
 
-                    existingOwner?.pets?.add(existingPet!!)
-                    existingPet!!.owner = existingOwner
+                        existingOwner?.pets?.add(existingPet!!)
+                        existingPet!!.owner = existingOwner
 
-                }
-                else{
-                    val petResult: RealmPet? = realm.query<RealmPet>("id == $0", ObjectId(pet.id)).first().find()
-                    val existingPet = findLatest(petResult!!)
-
-                    val owner = RealmOwner().apply {
-                        this.name = ownerName
-                        this.pets.add(existingPet!!)
                     }
-                    val managedOwner = copyToRealm(owner)
-                    existingPet?.owner = findLatest(managedOwner)
+                    else{
+                        val petResult: RealmPet? = realm.query<RealmPet>("id == $0", ObjectId(pet.id)).first().find()
+                        val existingPet = findLatest(petResult!!)
+
+                        val owner = RealmOwner().apply {
+                            this.name = ownerName
+                            this.pets.add(existingPet!!)
+                        }
+                        val managedOwner = copyToRealm(owner)
+                        existingPet?.owner = findLatest(managedOwner)
+                    }
                 }
 
             }
@@ -116,7 +118,7 @@ class RealmDatabase {
                     this.type = type
                 }
                 val managedPet = copyToRealm(pet)
-                if (ownerName.isNotEmpty()) {
+                if (ownerName.isNotBlank()) {
                     val ownerResult: RealmOwner? =
                         realm.query<RealmOwner>("name == $0", ownerName).first().find()
 
