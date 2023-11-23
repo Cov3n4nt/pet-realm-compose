@@ -10,6 +10,7 @@ import com.thebrownfoxx.petrealm.models.Pet
 import com.thebrownfoxx.petrealm.realm.RealmDatabase
 import com.thebrownfoxx.petrealm.realm.models.RealmOwner
 import com.thebrownfoxx.petrealm.ui.screens.pets.AddPetDialogState
+import com.thebrownfoxx.petrealm.ui.screens.pets.AddPetOwnerDialogState
 import com.thebrownfoxx.petrealm.ui.screens.pets.EditPetDialogState
 import io.realm.kotlin.ext.asFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -96,8 +97,9 @@ class OwnersViewModel: ViewModel() {
                             newName = ownerName,
                         )
                     }
+                    state = OwnerListenerState.Hidden
                 }
-                _ownerDetailsState.update { OwnerListenerState.Hidden }
+                _ownerDetailsState.update { state }
             }
         }
     }
@@ -106,5 +108,6 @@ class OwnersViewModel: ViewModel() {
         viewModelScope.launch {
             database.disownPet(pet)
         }
+
     }
 }

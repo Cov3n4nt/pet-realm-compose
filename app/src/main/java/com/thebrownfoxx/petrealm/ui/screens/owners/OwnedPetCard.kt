@@ -31,12 +31,12 @@ import com.thebrownfoxx.petrealm.ui.theme.AppTheme
 @Composable
 fun OwnedPetCard(
     pet: Pet,
-    onDisown: ()->Unit
+    onDisown: (Pet)->Unit
     ) {
     val dismissState = rememberDismissState(
         confirmValueChange = {direction->
             if(direction == DismissValue.DismissedToEnd){
-               onDisown()
+               onDisown(pet)
             }
             true
         }

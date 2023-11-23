@@ -110,8 +110,9 @@ class PetsViewModel : ViewModel() {
                             pet = pet,
                         )
                     }
+                    state = AddPetOwnerDialogState.Hidden
                 }
-                _addPetOwnerDialogState.update { AddPetOwnerDialogState.Hidden }
+                _addPetOwnerDialogState.update { state }
             }
         }
     }
@@ -151,8 +152,9 @@ class PetsViewModel : ViewModel() {
                             ownerName = ownerName
                         )
                     }
+                    state = EditPetDialogState.Hidden
                 }
-                _editPetDialogState.update { EditPetDialogState.Hidden }
+                _editPetDialogState.update { state }
             }
         }
     }
