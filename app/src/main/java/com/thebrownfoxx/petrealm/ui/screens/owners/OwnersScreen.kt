@@ -56,7 +56,8 @@ fun OwnersScreen(
     ownerListenerState: OwnerListenerState,
 ) {
 
-    Scaffold(modifier = modifier,
+    Scaffold(
+        modifier = modifier,
         topBar = {
             Column {
 
@@ -69,9 +70,22 @@ fun OwnersScreen(
                 )
             }
 
-        },
 
-    ) { contentPadding ->
+        },
+        bottomBar = {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                FloatingActionButton(
+                    onClick = { navigator.navigateUp()},
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Pets, contentDescription = null)
+                }
+            }
+        }
+        ) { contentPadding ->
 
         Box(
             modifier = Modifier
